@@ -1,20 +1,22 @@
-import { Component } from "react"
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
+import { useState } from "react"
 
-class AddComment extends Component {
-  state = { review: { comment: "", rate: 1, elementId: this.props.elementId } }
+const AddComment = (props) => {
+  // state = { review: { comment: "", rate: 1, elementId: this.props.elementId } }
 
-  handleFieldChange = (propertyName, propertyValue) => {
-    this.setState({ review: { ...this.state.review, [propertyName]: propertyValue } })
+  const [review, setReview] = useState({ comment: "", rate: 1, elementId: props.elementId })
+
+  const handleFieldChange = (propertyName, propertyValue) => {
+    setReview({ ...review, [propertyName]: propertyValue })
   }
 
-  saveData = async () => {
+  const saveData = async () => {
     try {
       const URL_STRIVE = "https://striveschool-api.herokuapp.com/api/comments/"
       const response = await fetch(URL_STRIVE, {
         method: "POST",
-        body: JSON.stringify(this.state.review),
+        body: JSON.stringify(review),
         headers: {
           "Content-type": "application/json",
           Authorization:
@@ -29,38 +31,36 @@ class AddComment extends Component {
     }
   }
 
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    await this.saveData()
+    await saveData()
   }
 
-  render() {
-    return (
-      <Form onSubmit={(e) => this.handleSubmit(e)}>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-          <Form.Label>Recensione:</Form.Label>
-          <Form.Control
-            type='text'
-            placeholder='scrivi qui la tua recensione...'
-            value={this.state.review.comment}
-            onChange={(e) => this.handleFieldChange("comment", e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group className='mb-3' controlId='exampleForm.ControlTextarea1'>
-          <Form.Label>Voto:</Form.Label>
-          <Form.Control
-            type='number'
-            min={1}
-            max={5}
-            placeholder='lascia qui il tuo voto da 1 a 5...'
-            value={this.state.review.rate}
-            onChange={(e) => this.handleFieldChange("rate", e.target.value)}
-          />
-        </Form.Group>
-        <Button type='submit'>Invia recensione!</Button>
-      </Form>
-    )
-  }
+  return (
+    <Form onSubmit={(e) => handleSubmit(e)}>
+      <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+        <Form.Label>Recensione:</Form.Label>
+        <Form.Control
+          type='text'
+          placeholder='scrivi qui la tua recensione...'
+          value={review.comment}
+          onChange={(e) => handleFieldChange("comment", e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group className='mb-3' controlId='exampleForm.ControlTextarea1'>
+        <Form.Label>Voto:</Form.Label>
+        <Form.Control
+          type='number'
+          min={1}
+          max={5}
+          placeholder='lascia qui il tuo voto da 1 a 5...'
+          value={review.rate}
+          onChange={(e) => handleFieldChange("rate", e.target.value)}
+        />
+      </Form.Group>
+      <Button type='submit'>Invia recensione!</Button>
+    </Form>
+  )
 }
 
 export default AddComment

@@ -1,11 +1,12 @@
-import { Component } from "react"
+import { useEffect, useState } from "react"
 import CommentList from "./CommentList"
 import AddComment from "./AddComment"
 
-class CommentArea extends Component {
-  state = { comments: null }
+const CommentArea = (props) => {
+  // state = { comments: null }
+  const [comments, setComments] = useState(null)
 
-  fetchReview = (elementId) => {
+  const fetchReview = (elementId) => {
     const URL_STRIVE = "https://striveschool-api.herokuapp.com/api/comments/"
     fetch(URL_STRIVE + elementId, {
       headers: {
@@ -52,25 +53,29 @@ class CommentArea extends Component {
         }
       })
       .then((comments) => {
-        this.setState({ comments })
+        // this.setState({ comments })
+        setComments(comments)
       })
       .catch((err) => {
         console.log(err)
       })
   }
 
-  componentDidMount() {
-    this.fetchReview(this.props.elementId)
-  }
+  // componentDidMount() {
+  //   this.fetchReview(this.props.elementId)
+  // }
 
-  render() {
-    return (
-      <>
-        <CommentList elementId={this.props.elementId} comments={this.state.comments} />
-        <AddComment elementId={this.props.elementId} />
-      </>
-    )
-  }
+  useEffect(() => {
+    fetchReview(props.elementId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
+    <>
+      <CommentList elementId={props.elementId} comments={comments} />
+      <AddComment elementId={props.elementId} />
+    </>
+  )
 }
 
 export default CommentArea
